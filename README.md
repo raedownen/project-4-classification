@@ -1,88 +1,84 @@
 # Classification Project
 
 ## Project Description
-Companies all across the globe deal with customers leaving on a regular basis. These people are described as those who "churn". Telco is wondering, "Why are our customers leaving?" In this project I will look at data of their customers and identify drivers that might affect the chance a customer might churn.
+Are charter schools any better concerning student discipline?  I explore the state of Texas's public education student discipline data by using classification methods and models.
 
 ## Project Goals
-* Identify drivers of churn for Telco customers
-* Use the identified drivers to develop a model to determine if a customer is likely to churn
-* Churn is defined as a customer who has left Telco
-* This information can be useful to help Telco find ways to retain customers who are likely to churn.
-
+-Using data from TEA website, try to determine if school district type can be predicted by student discipline and enrollment numbersdiscipline -Develop a model to determine if a district is charter or traditional. -This information on district discipline may be useful to parents and future employees.
 ## Initial Thoughts
 
-My initial hypothesis is that drivers of churn will be predictors of if a customer will churn in the near future.
+Hypothesis
+Null H: Mean of disciplined students is the same for charter schools and traditional schools. Alt H: Mean of disciplined students is not the same for charter schools and traditional schools.
 
 ## The Plan
-* Aqcuire the data from Codeup mySQL database
+* Aqcuire the data from TEA website
 
-* Prepare data
-    * Remove redundant data columns (payment_type_id', 'internet_service_type_id', 'contract_type_id', 'customer_id', )
-    * Drop customers whose total_charges are spaces; these customers are new customers (tenure=0 and churn=No)
-    * Encode churn as 'churn_encoded' {'Yes': 1, 'No': 0}, then drop 'churn' column
+* Prepare
+*Renamed columns for ease of coding and to shorten column names.
 
-* Explore data in search of drivers of churn
+*Removed data columns that did not meet project needs.
+
+*Checked for duplicates, nulls, and -999 and removed those columns.
+
+*Removed districts that did not have both enrollment and disciplined numbers.
+
+*Encoded target variable, charter_status, as 'charter_encoded' {'Yes': 1, 'No': 0}, then dropped 'charter_status' column.
+
+*Outliers were not removed.
+
+*Created a pivot table to access items under the 'heading name' column to create 2 new columns.
+
+*Feature engineered a new column from pivoted columns.
+
+*Merged the pivot table onto the dataframe.
+
+*Reset the index.
+
+*Split data into train, validate, and test (50/30/20).
+
+
+* Explore data to help predict charter school status with discipline data
     * Answer the following initial question
-        * How often do customers churn?
-        * Does a customer's tenure affect churn?
-        * Do higher monthly charges affect churn?
-        * Does contract type affect churn? 
-        * Do those with no tech support churn more?
+        * How likely is a school with high numbers a charter school?
+        * Does enrollment affect status?
+        * Why do some school districts have such high discipline numbers?
+        * Does combination does the of enrollment and disciplined better predict status? 
+        * The data captured 1122 individual school districts, will the ratio of school district types be similar to the discipline data?
 
-* Develop a model to predict if a customer will churn
+* Develop 4 model to predict if a a district is a charter school
     * Use drivers identified through exploration to build different predictive models
     * Evaluate models on train and validate data
-    * Select best model base on highest recall (because saying they didn't churn and they churned is more costly)
+    * Select best model base on accuracy
     * Evaluate the best model on the test data
 
 * Draw conclusions
 
-## Data dictionary
+### Data dictionary
+
 | Feature | Definition | Values |
 |:--------|:-----------|:-------
-|gender| The customer's gender| Male or Female|
-|senior_citizen| Is this customer a senior citizen?| {'Yes': 1, 'No': 0} |
-|partner| Does this person live with a partner?|'Yes', 'No'|
-|dependents| Does this person live with dependents?| 'Yes', 'No'|
-|tenure| The number of **months** a customer has been with the company| *float* |
-|phone_service| Does this person subscribe to phone service?| 'Yes', 'No'|
-|multiple_lines| Does this person have multiple phone lines?| 'Yes', 'No', 'No phone service'|
-|online_security| Does this person subscribe to online security?| 'Yes', 'No', 'No internet service'|
-|online_backup| Does this person subscribe to online backup?| 'Yes', 'No', 'No internet service'
-|device_protection| Does this person subscribe to device protection?| 'Yes', 'No', 'No internet service'
-|tech_support| Does this person subscribe to tech support?| 'Yes', 'No', 'No internet service'
-|streaming_tv| Does this person subscribe to streaming TV?| 'Yes', 'No', 'No internet service'
-|streaming_movies| Does this person subscribe to streaming movies?| 'Yes', 'No', 'No internet service'
-|paperless_billing| Does this person use paperless billing?| 'Yes', 'No'
-|monthly_charges| The amount a customer is currently charged per month| *float* |
-|total_charges| The amount a customer has been charged since becoming a customer| *float* |
-|contract_type| The length of contract the customer currently has| 'Month-to-month', 'One-year', or 'Two-year'|
-|internet_service_type| Type of internet service | 'DSL', 'Fiber', 'None'|
-|payment_type| The way the customer pays their bill. |'Mailed check', 'Electronic check', 'Credit card (automatic)', 'Bank transfer (automatic)'
-|**Target variable**
-|churn_encoded| Did the customer leave the company? | {'Yes': 1, 'No': 0}|
-
+|dist_name| Scool District Name| Categorical|
+|charter_encoded| Is the district type a charter school?| {'Yes': 1, 'No': 0} |
+|enrollment| # of students enrolled in the district| Numerical |
+|disciplined| # of student discipline incidents|Numerical'|
+|discipline_percent| # disciplined/# enrolled|Numerical|
 
 ## Steps to Reproduce
-1. Clone this repo
-2. Acquire the data from Codeup mySQL "telco" database using your personal ```env.py``` file where you store your ```username```, ```password```, and ```host```
+1. #go to : https://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_All_Districts.html
+#download the csv for 2018/19, 2019/20, 2020/21, and 2021/22 School Years
+#upload csv files:
+df22 = pd.read_csv('DISTRICT_summary_22.csv')
+df21 = pd.read_csv('DISTRICT_summary_21.csv')
+df20 = pd.read_csv('DISTRICT_summary_20.csv')
+df19 = pd.read_csv('DISTRICT_summary_19.csv')
 3. Put the data in the file containing the cloned repo.
 4. Run notebook.
 
 ## Takeaways and Conclusions
-* About 1/4 of our customers churn
-* Tenure seems to be a driver of churn; we need to intice customers to stay around.
-* Monthly_charges seem to be a driver of churn; we need to help lower monthly charges.
-* Contract_type seems to be a driver of churn; we need to intice customers to sign longer contracts.
-* Tech_support seems to be a driver of churn; we should encourage more customers to get tech support
+After modeling with 4 models, I have concluded that even though I had a "best" it didn't predict charter school status any better than baseline.
 
 ## Recommendations
-* To reduce churn, I would encourage the company to think about taking the following actions:
-    * Seek out young customers and give discounts (lower monthly cost) in order to keep customers longer (increase tenure)
-    * Seek out month-to-month contract customers and encourage them to sign a longer contract maybe through discounts
-    * Seek out those who don't have tech support and give a free trial of tech support.
+Revisit this data over the holidays and feature engineer more variables, and look into other discipline reports that break it down by school.  I think this will better help in future modeling.
 
 ## Next Steps
-* In the next iteration:
-    * Look into how customers with internet add-ons are the same people then can see if they churn more or less.
-    * Look into cost of add-ons and see if there are bundles that might reduce monthly charges. That could help us entice more customers to stay.
+I will use this data for another individual project and I would use more of the discipline data types and not just the whole number.  I will be able to break down the discipline by socio-economic staus, race, ethnicity, special. ed. services receiver, location, and by offense.
